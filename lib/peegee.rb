@@ -1,0 +1,6 @@
+require 'peegee/table'
+require 'peegee/constraint'
+require 'peegee/unique_constraint'
+require 'peegee/primary_key'
+require 'peegee/foreign_key'
+require 'peegee/index'

@@ -1,0 +1,34 @@
+h1. What?
+Peegee (pronounced "Pee - Gee", as in the letters PG, for Postgres) is a utility that provides an abstraction for performing PostgreSQL related tasks from Ruby, or your Rails application.
+
+h1. Why?
+This project started with the need to improve the performance of PostgreSQL's CLUSTER command. While clustering your database tables improves query performance significantly, the actual process of clustering takes unacceptable amounts of time. For instance, it may take roughly 20 hours on a moderately big set of tables (around 60GB). Your milage may vary, of course.
+Refactoring the clustering functionality surfaced a clean set of utilities that resulted in the creation of this gem. Some are useful, and some are just pointless.
+
+The initial code for this gem was created during the Boston.rb hackfest at Thoughtbot, on April 7th, 2009.
+
+h2. Todo
+
+The first order of business will be to create specs where applicable.
+
+Then, the idea is to keep adding functionality that may be useful for DBAs or application developers and other PostgreSQL users. Some that come to mind are:
+
+* Ability to clean out all of table's index and foreign key names, following a given pattern. On occasions, table names are altered leaving behind pesky legacy names for related objects.
+* Ability to identify database stinks. For instance: 
+** tables without primary keys, or indexes (which are not pure join tables)
+** foreign keys without indexes (useful for manually identifying and fixing if applicable), 
+** report on columns that look like foreign keys, but aren't (based on rails conventions).
+** columns that are nullable, and are flagged as unique
+** tables with incrementing columns names, indiciating a possible denormalization
+** columns with a default value of 'NULL' (the varchar), where NULL may have been intended.
+(much of these are stolen from the excellent "SchemaSpy":http://schemaspy.sourceforge.net/)
+
+There's also a bunch of #TODO tags in the code, where there's clearly room for improvement.
+
+h1. License
+
+Copyright (c) 2009 Harold A. Gimenez, released under the MIT license.
+
+
+
+

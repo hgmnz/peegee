@@ -5,10 +5,12 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "peegee"
-    gem.summary = %Q{TODO}
+    gem.summary = %Q{A set of utilities for doing PostgreSQL database related stuffs from ruby.}
     gem.email = "harold.gimenez@gmail.com"
     gem.homepage = "http://github.com/hgimenez/peegee"
     gem.authors = ["Harold A. Gimenez"]
+    gem.add_dependency 'activerecord'
+    gem.requirements << 'A functioning PostgreSQL database, configured via ActiveRecord (for example, database.yml on a Rails project, or inline within your scripts).'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
