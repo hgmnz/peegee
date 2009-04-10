@@ -1,0 +1,7 @@
+= peegee
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 Harold A. Gimenez. See LICENSE for details.
