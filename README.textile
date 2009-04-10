@@ -13,19 +13,19 @@ h1. Example usage
 
 Assuming we're in a Rails app, you can simply do:
 
-<code>people_table = Peegee::Table.new(:table_name => 'people')
+<pre><code>people_table = Peegee::Table.new(:table_name => 'people')
 people_table.ddl # a string containing this table's DDL
 people_table.indexes
 people_table.foreign_keys
-people_table.dependent_foreign_keys</code>
+people_table.dependent_foreign_keys</code></pre>
 The three commands above return arrays of Peegee::Index and Peegee::ForeignKey objects, which all respond to drop and create.
 For example, you could drop and recreate the first dependent foreign key (some other table referencing people) with:
-<code>people_table.dependent_foreign_keys.first.drop
-people_table.dependent_foreign_keys.first.create</code>
+<pre><code>people_table.dependent_foreign_keys.first.drop
+people_table.dependent_foreign_keys.first.create</code></pre>
 After the call to drop, the @dependent_foreign_keys instance variable on the people_table object remains cached, and calling create will simply execute the cached SQL required to recreate the database object.
 
 The strategy used for clustering a table is to store all dependencies in order to restore them later (as viewed above), and move all of the table's data on the order given by a certain index. This is all executed in a database transaction in case it blows up. The result should be just like the pgsql native CLUSTER command:
-<code>people_table.cluster('people_pk') #must specify an index by which to cluster</code>
+<pre><code>people_table.cluster('people_pk') #must specify an index by which to cluster</code></pre>
 
 h2. Todo
 
