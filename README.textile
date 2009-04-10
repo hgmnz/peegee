@@ -9,6 +9,24 @@ Refactoring the clustering functionality surfaced a clean set of utilities that 
 
 The initial code for this gem was created during the Boston.rb hackfest at Thoughtbot, on April 7th, 2009.
 
+h1. Example usage
+
+Assuming we're in a Rails app, you can simply do:
+
+<code><pre>people_table = Peegee::Table.new(:table_name => 'people')
+people_table.ddl # a string containing this table's DDL
+people_table.indexes
+people_table.foreign_keys
+people_table.dependent_foreign_keys</pre></code>
+The three commands above return arrays of Peegee::Index, Peegee::ForeignKey and Peegee::DependentForeignKey objects, which all respond to drop and create.
+For example, you could drop and recreate the first dependent foreign key (some other table referencing people) with:
+<code><pre>people_table.dependent_foreign_keys.first.drop
+people_table.dependent_foreign_keys.first.create</pre></code>
+After the call to drop, the @dependent_foreign_keys instance variable on the people_table object remains cached, and calling create will simply execute the cached SQL required to recreate the database object.
+
+The strategy used for clustering a table is to store all dependencies in order to restore them later (as viewed above), and move all of the table's data on the order given by a certain index. The result is just like the pgsql native CLUSTER command:
+<code><pre>people_table.cluster('people_pk') #must specify an index by which to cluster</pre></code>
+
 h2. Todo
 
 The first order of business will be to create specs where applicable.
@@ -26,6 +44,10 @@ Then, the idea is to keep adding functionality that may be useful for DBAs or ap
 (much of these are stolen from the excellent "SchemaSpy":http://schemaspy.sourceforge.net/)
 
 There's also a bunch of #TODO tags in the code, where there's clearly room for improvement.
+
+I would also like to make this code ORM agnostic. Right now, it depends on ActiveRecord to retrieve a connection and execute commands.
+
+Please fork away and help improve it.
 
 h1. License
 
