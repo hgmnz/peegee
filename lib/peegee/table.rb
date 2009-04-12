@@ -5,7 +5,16 @@ module Peegee
     include Peegee::Clustering
     
     def initialize(opts = {})
-      @table_name = opts[:table_name]
+      if Peegee::Table.exists?(opts[:table_name])
+        @table_name = opts[:table_name]
+      else
+        raise TableDoesNotExistError, "Table #{opts[:table_name]} does not exist", caller
+      end
+    end
+
+    def self.exists?(table_name)
+      sql = "select * from pg_class where relname = '#{table_name}' and relkind = 'r'"
+      !(ActiveRecord::Base.connection.execute(sql).entries.flatten.size == 0)
     end
 
     def oid
@@ -16,20 +25,40 @@ module Peegee
       @foreign_keys ||= fetch_foreign_keys
     end
 
+    def foreign_keys!
+      fetch_foreign_keys
+    end
+
     def dependent_foreign_keys
       @dependent_foreign_keys ||= fetch_dependent_foreign_keys
+    end
+
+    def dependent_foreign_keys!
+      fetch_dependent_foreign_keys
     end
 
     def primary_keys
       @primary_keys ||= fetch_primary_keys
     end
 
+    def primary_keys!
+      fetch_primary_keys
+    end
+
     def unique_constraints
       @unique_constraints ||= fetch_unique_constraints
     end
 
+    def unique_constraints!
+      fetch_unique_constraints
+    end
+
     def indexes
       @indexes ||= fetch_indexes
+    end
+
+    def indexes!
+      fetch_indexes
     end
 
     # Returns the DDL for this table as a string.
@@ -61,6 +90,7 @@ module Peegee
       ddl += columns.join(', ') + ' )'
       ddl.gsub('\\','')
     end
+
 
 
     private
