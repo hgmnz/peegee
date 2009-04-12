@@ -3,16 +3,16 @@ module Peegee
 
     # Clusters this table. See http://www.postgresql.org/docs/8.3/interactive/sql-cluster.html
     # Optionally specify the index to cluster by (by name or Peegee::Index object).
-    # If the index is not specify, it will try to induce which index to 
-    # use by looking at postgresql's internals. If it can't find out,
-    # an exception will be raised.
+    # The index to use would ideally be specified using the <tt>Peegee::Configuration</tt> 
+    # instance. If the index is not specified, it will try to induce which index to 
+    # use by looking at postgresql's internals. 
+    # If a proper index can't be found, an exception will be raised.
     def cluster(cluster_index = nil)
       cluster_index = find_cluster_index(cluster_index)
       puts "Cluster index is: #{cluster_index.inspect}"
       puts "Cluster index type is: #{cluster_index.class.name}"
       dependencies, dependent_foreign_keys = remember_dependencies
       ActiveRecord::Base.transaction do
-        puts "Clustering #{@table_name} by #{cluster_index.index_name} (with order => #{cluster_index.order})"
         dependent_foreign_keys.map { |dfk| dfk.drop }
         create_tmp_table
         move_data(cluster_index)
@@ -24,11 +24,11 @@ module Peegee
 
     private
 
-      # Retrieves the Peegee::Index object that will be used
-      # for clustering this table. The cluster_index parameter can
-      # be either a string representing the index name, or a Peegee::Index object.
+      # Retrieves the <tt>Peegee::Index</tt> object that will be used
+      # for clustering this table. The <tt>cluster_index</tt> parameter can
+      # be either a string representing the index name, or a <tt>Peegee::Index</tt> object.
       # Raises an exception if either a proper index was not found
-      # or more than one index was found given a cluster_index name.
+      # or more than one index was found given a <tt>cluster_index</tt> name.
       def find_cluster_index(cluster_index)
         cluster_index = Peegee::Configuration.instance.cluster_indexes[self.table_name.to_sym].to_s if cluster_index.nil?
         return cluster_index if cluster_index.kind_of?(Peegee::Index)
@@ -69,7 +69,7 @@ module Peegee
       # drop the table being clustered (to clean out the dependency on
       # the sequence).
       # This method is called after having created the tmp table, otherwise it will fail.
-      #
+      #--
       # The method for finding a table's sequence is hackish. 
       # TODO: Find a better method for finding a table's sequence.
       def reasign_sequence_to_tmp_table
@@ -91,8 +91,6 @@ module Peegee
           seq[2].match /nextval\('[\"']{0,2}(\w*)[\"']{0,2}.*'::regclass\)/
           sequence_name = $1 #the match above...
           ActiveRecord::Base.connection.execute("ALTER SEQUENCE \"#{sequence_name}\" OWNED BY #{@table_name}_tmp.#{seq[0]}")
-        else
-          puts "\n\n\t*****#{@table_name} apparently doesn't have a sequence"
         end
       end
 
