@@ -6,6 +6,11 @@ module Peegee
 
     attr_accessor :table_name
     
+    # Creates a new instance of Peegee::Table.
+    # Receives an +opts+ hash paramater, which expects
+    # to contain a key called <tt>:table_name</tt>.
+    # A TableDoesNotExistError is thrown if the table
+    # with the supplied name is not found in the database.
     def initialize(opts = {})
       if Peegee::Table.exists?(opts[:table_name])
         @table_name = opts[:table_name]
@@ -14,15 +19,21 @@ module Peegee
       end
     end
 
+    # Class method that finds out if a given table name exists in the database.
     def self.exists?(table_name)
       sql = "select * from pg_class where relname = '#{table_name}' and relkind = 'r'"
       !(ActiveRecord::Base.connection.execute(sql).entries.flatten.size == 0)
     end
 
+    # The postgresql OID for this table.
     def oid
       @oid ||= fetch_oid
     end
 
+    # Returns an array of all foreign keys for this table, as <tt>Peegee::ForeignKey</tt> objects. 
+    # The first time this method is called, foreign keys are retrieved from the database 
+    # and cached in an instance variable. Subsequence calls will use the cached values. 
+    # To force a lookup of foreign keys use the <tt>foreign_keys!</tt> method instead.
     def foreign_keys
       @foreign_keys ||= fetch_foreign_keys
     end
@@ -31,6 +42,10 @@ module Peegee
       fetch_foreign_keys
     end
 
+    # Returns an array of all dependent foreign keys for this table, as <tt>Peegee::ForeignKey</tt> objects. 
+    # The first time this method is called, dependent foreign keys are retrieved from the database 
+    # and cached in an instance variable. Subsequence calls will use the cached values. 
+    # To force a lookup of dependent foreign keys use the <tt>dependent_foreign_keys!</tt> method instead.
     def dependent_foreign_keys
       @dependent_foreign_keys ||= fetch_dependent_foreign_keys
     end
@@ -39,6 +54,10 @@ module Peegee
       fetch_dependent_foreign_keys
     end
 
+    # Returns an array of primary keys for this table, as <tt>Peegee::PrimaryKey</tt> objects. 
+    # The first time this method is called, primary keys are retrieved from the database 
+    # and cached in an instance variable. Subsequence calls will use the cached values. 
+    # To force a lookup of primary keys use the <tt>primary_key!</tt> method instead.
     def primary_key
       @primary_key ||= fetch_primary_key
     end
@@ -47,6 +66,10 @@ module Peegee
       fetch_primary_key
     end
 
+    # Returns an array of unique constraints for this table, as <tt>Peegee::UniqueConstraint</tt> objects. 
+    # The first time this method is called, unique constraints are retrieved from the database 
+    # and cached in an instance variable. Subsequence calls will use the cached values. 
+    # To force a lookup of unique constraints use the <tt>unique_constraints!</tt> method instead.
     def unique_constraints
       @unique_constraints ||= fetch_unique_constraints
     end
@@ -55,6 +78,10 @@ module Peegee
       fetch_unique_constraints
     end
 
+    # Returns an array of indexes for this table, as <tt>Peegee::indexes</tt> objects. 
+    # The first time this method is called, unique constraints are retrieved from the database 
+    # and cached in an instance variable. Subsequence calls will use the cached values. 
+    # To force a lookup of unique constraints use the <tt>indexes!</tt> method instead.
     def indexes
       @indexes ||= fetch_indexes
     end
@@ -93,9 +120,8 @@ module Peegee
       ddl.gsub('\\','')
     end
 
-
-
     private
+      # Retrieves this table's OID from the database.
       def fetch_oid
         sql = 'SELECT c.oid ' +
         ' FROM pg_catalog.pg_class c ' +
@@ -105,6 +131,7 @@ module Peegee
         return ActiveRecord::Base.connection.execute(sql).entries[0]
       end
 
+      # Retrieves this table's primary key from the database.
       def fetch_primary_key
         sql = 'select  conname ' +
             ' , pg_get_constraintdef(pk.oid, true) as foreign_key ' +
@@ -122,7 +149,7 @@ module Peegee
         end
       end
 
-
+      # Retrieves this table's unique constraints from the database.
       def fetch_unique_constraints
         sql = 'select  conname ' +
             ' , pg_get_constraintdef(uc.oid, true) as foreign_key ' +
@@ -140,6 +167,7 @@ module Peegee
         end
       end
 
+      # Retrieves this table's foreign keys from the database.
       def fetch_foreign_keys
         sql = 'select  conname ' +
             ' , pg_get_constraintdef(fk.oid, true) as foreign_key ' +
@@ -158,6 +186,8 @@ module Peegee
 
       end
 
+      # Retrieves this table's dependent foreign keys from the database.
+      # A dependent foreign key, is any foreign key that references this table.
       def fetch_dependent_foreign_keys
         sql = 'select pg_constraint.conname,' +
             'dep_table.relname, ' +
@@ -174,6 +204,7 @@ module Peegee
         end
       end
 
+      # Retrieves indexes for this table from the database.
       def fetch_indexes
         sql = "SELECT pg_get_indexdef(i.indexrelid, 0, true) as index_definition " +
             ", c2.relname as index_name " +
@@ -181,7 +212,6 @@ module Peegee
             "FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i " +
             "WHERE c.oid = '#{@table_name}'::regclass AND c.oid = i.indrelid AND i.indexrelid = c2.oid " #+
             #"AND i.indisprimary = false" #don't get primary key constraints...
-        #indexes = ActiveRecord::Base.connection.execute(sql).entries.collect{ |i| i[0] + ';'}
         indexes = ActiveRecord::Base.connection.execute(sql).entries
         return indexes.collect do |i| 
           Peegee::Index.new(:table_name => @table_name,
@@ -190,8 +220,6 @@ module Peegee
                             :def => i[0])
           end
       end
-
-
 
   end
 
