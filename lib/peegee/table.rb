@@ -3,6 +3,8 @@ module Peegee
 
   class Table
     include Peegee::Clustering
+
+    attr_accessor :table_name
     
     def initialize(opts = {})
       if Peegee::Table.exists?(opts[:table_name])
@@ -37,12 +39,12 @@ module Peegee
       fetch_dependent_foreign_keys
     end
 
-    def primary_keys
-      @primary_keys ||= fetch_primary_keys
+    def primary_key
+      @primary_key ||= fetch_primary_key
     end
 
-    def primary_keys!
-      fetch_primary_keys
+    def primary_key!
+      fetch_primary_key
     end
 
     def unique_constraints
@@ -103,9 +105,7 @@ module Peegee
         return ActiveRecord::Base.connection.execute(sql).entries[0]
       end
 
-
-
-      def fetch_primary_keys
+      def fetch_primary_key
         sql = 'select  conname ' +
             ' , pg_get_constraintdef(pk.oid, true) as foreign_key ' +
             ' from pg_catalog.pg_constraint pk ' +

@@ -10,14 +10,15 @@ module Peegee
       cluster_index = find_cluster_index(cluster_index)
       puts "Cluster index is: #{cluster_index.inspect}"
       puts "Cluster index type is: #{cluster_index.class.name}"
-      dependencies = remember_dependencies
+      dependencies, dependent_foreign_keys = remember_dependencies
       ActiveRecord::Base.transaction do
         puts "Clustering #{@table_name} by #{cluster_index.index_name} (with order => #{cluster_index.order})"
-        dependencies.map { |dep| dep.drop }
+        dependent_foreign_keys.map { |dfk| dfk.drop }
         create_tmp_table
         move_data(cluster_index)
         drop_original_and_rename_tmp_table
         dependencies.reverse.map { |dep| dep.create }
+        dependent_foreign_keys.map { |dfk| dfk.create }
       end
     end
 
@@ -29,6 +30,7 @@ module Peegee
       # Raises an exception if either a proper index was not found
       # or more than one index was found given a cluster_index name.
       def find_cluster_index(cluster_index)
+        cluster_index = Peegee::Configuration.instance.cluster_indexes[self.table_name.to_sym].to_s if cluster_index.nil?
         return cluster_index if cluster_index.kind_of?(Peegee::Index)
         the_index = nil
         if cluster_index #cluster_index is specified
@@ -110,8 +112,8 @@ module Peegee
       # dependent foreign keys, and indexes. 
       def remember_dependencies
         dependencies = []
-        dependencies << foreign_keys << dependent_foreign_keys << indexes
-        dependencies.flatten
+        dependencies << foreign_keys << indexes
+        return dependencies.flatten, dependent_foreign_keys 
       end
 
   end
