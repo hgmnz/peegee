@@ -27,12 +27,11 @@ After the call to drop, the @dependent_foreign_keys instance variable on the peo
 The strategy used for clustering a table is to store all dependencies in order to restore them later (as viewed above), and move all of the table's data on the order given by a certain index. This is all executed in a database transaction in case it blows up. The result should be just like the pgsql native CLUSTER command:
 <pre><code>people_table.cluster('people_pk') #must specify an index by which to cluster</code></pre>
 
-h2. Todo
+h1. Todo
 
 The first order of business will be to create specs where applicable.
 
-Then, the idea is to keep adding functionality that may be useful for DBAs or application developers and other PostgreSQL users. Some that come to mind are:
-
+Then, the idea is to keep adding functionality that may be useful for DBAs or application developers and other PostgreSQL users. Some that come to mind are: 
 * Ability to clean out all of table's index and foreign key names, following a given pattern. On occasions, table names are altered leaving behind pesky legacy names for related objects.
 * Ability to identify database stinks. For instance: 
 ** tables without primary keys, or indexes (which are not pure join tables)
@@ -51,13 +50,13 @@ Please fork away and help improve it.
 
 h1. Revision History
 
-* Version 0.1.1 (April 11th 2009): 
-**Added the Configuration singleton class, which for now allows the user to specify which indexes to cluster each table by.
-**Added exists? class method to Peegee::Table class. Creating a Peegee::Table instance now fails if the table does not exist in the database.
-**Added bang (!) methods to Peegee::Table class, which force the lookup of foreign_keys!, constraints!, indexes!, etc, even when they're already cached.
+* Version 0.1.1 (in progress): 
+** Added the Configuration singleton class, which for now allows the user to specify which indexes to cluster each table by.
+** Added exists? class method to Peegee::Table class. Creating a Peegee::Table instance now fails if the table does not exist in the database.
+** Added bang (!) methods to Peegee::Table class, which force the lookup of foreign_keys!, constraints!, indexes!, etc, even when they're already cached.
 
 * Version 0.1.0 (April 10th 2009): 
-**First release.
+** First release.
 
 h1. License
 
