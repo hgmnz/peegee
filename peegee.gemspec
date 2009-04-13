@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-Gem::Specification.new do |s| 
+Gem::Specification.new do |s|
   s.name = %q{peegee}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Harold A. Gimenez"]
-  s.date = %q{2009-04-10}
+  s.date = %q{2009-04-13}
   s.email = %q{harold.gimenez@gmail.com}
   s.extra_rdoc_files = [
     "README.textile"
@@ -17,15 +17,21 @@ Gem::Specification.new do |s|
     "VERSION.yml",
     "lib/peegee.rb",
     "lib/peegee/clustering.rb",
+    "lib/peegee/configuration.rb",
     "lib/peegee/constraint.rb",
     "lib/peegee/foreign_key.rb",
     "lib/peegee/index.rb",
     "lib/peegee/primary_key.rb",
     "lib/peegee/table.rb",
+    "lib/peegee/table_does_not_exist_error.rb",
     "lib/peegee/unique_constraint.rb",
     "peegee.gemspec",
-    "spec/peegee_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/factories.rb",
+    "spec/fixtures/activerecord_models.rb",
+    "spec/fixtures/structure.sql",
+    "spec/peegee_helper.rb",
+    "spec/spec_helper.rb",
+    "spec/unit/peegee_table_spec.rb"
   ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/hgimenez/peegee}
@@ -35,8 +41,11 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{A set of utilities for doing PostgreSQL database related stuffs from ruby.}
   s.test_files = [
-    "spec/peegee_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/factories.rb",
+    "spec/fixtures/activerecord_models.rb",
+    "spec/peegee_helper.rb",
+    "spec/spec_helper.rb",
+    "spec/unit/peegee_table_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
