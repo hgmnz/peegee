@@ -53,6 +53,7 @@ h1. Revision History
 ** Added the Configuration singleton class, which for now allows the user to specify which indexes to cluster each table by.
 ** Added exists? class method to Peegee::Table class. Creating a Peegee::Table instance now fails if the table does not exist in the database.
 ** Added bang (!) methods to Peegee::Table class, which force the lookup of foreign_keys!, constraints!, indexes!, etc, even when they're already cached.
+** Fixed bug in cluster method.
 
 * Version 0.1.0 (April 10th, 2009): 
 ** First release.
