@@ -7,6 +7,11 @@ h1. Why?
 This project started with the need to improve the performance of PostgreSQL's CLUSTER command. While clustering your database tables improves query performance significantly, the actual process of clustering takes unacceptable amounts of time. For instance, it may take roughly 20 hours on a moderately big set of tables (around 60GB). Your milage may vary, of course.
 Refactoring the clustering functionality surfaced a clean set of utilities that resulted in the creation of this gem. Some are useful, and some are just pointless.
 
+h1. Installation
+
+<pre><code>gem sources -a http://gems.github.com #if you haven't already #if you haven't already
+sudo gem install hgimenez-peegee</code></pre>
+
 h1. Example usage
 
 Assuming we're in a Rails app, you can simply do:
