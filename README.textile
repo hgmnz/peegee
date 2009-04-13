@@ -7,8 +7,6 @@ h1. Why?
 This project started with the need to improve the performance of PostgreSQL's CLUSTER command. While clustering your database tables improves query performance significantly, the actual process of clustering takes unacceptable amounts of time. For instance, it may take roughly 20 hours on a moderately big set of tables (around 60GB). Your milage may vary, of course.
 Refactoring the clustering functionality surfaced a clean set of utilities that resulted in the creation of this gem. Some are useful, and some are just pointless.
 
-The initial code for this gem was created during the Boston.rb hackfest at Thoughtbot, on April 7th, 2009.
-
 h1. Example usage
 
 Assuming we're in a Rails app, you can simply do:
@@ -50,13 +48,13 @@ Please fork away and help improve it.
 
 h1. Revision History
 
-* Version 0.1.1 (in progress): 
+* Version 0.1.1 (April 13th, 2009): 
 ** Set up RSpec testing environment. Started creating test suite.
 ** Added the Configuration singleton class, which for now allows the user to specify which indexes to cluster each table by.
 ** Added exists? class method to Peegee::Table class. Creating a Peegee::Table instance now fails if the table does not exist in the database.
 ** Added bang (!) methods to Peegee::Table class, which force the lookup of foreign_keys!, constraints!, indexes!, etc, even when they're already cached.
 
-* Version 0.1.0 (April 10th 2009): 
+* Version 0.1.0 (April 10th, 2009): 
 ** First release.
 
 h1. License
