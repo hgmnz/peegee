@@ -9,7 +9,7 @@ Refactoring the clustering functionality surfaced a clean set of utilities that 
 
 h1. Installation
 
-<pre><code>gem sources -a http://gems.github.com #if you haven't already #if you haven't already
+<pre><code>gem sources -a http://gems.github.com #if you haven't already 
 sudo gem install hgimenez-peegee</code></pre>
 
 h1. Example usage
