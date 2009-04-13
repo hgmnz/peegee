@@ -92,15 +92,17 @@ module Peegee
 
     # Returns the DDL for this table as a string.
     def ddl
-      sql = 'SELECT a.attname, ' +
-          'pg_catalog.format_type(a.atttypid, a.atttypmod), ' +
-          '(SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) ' +
-          ' FROM pg_catalog.pg_attrdef d ' +
-          ' WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef), ' +
-          'a.attnotnull, a.attnum ' +
-        'FROM pg_catalog.pg_attribute a ' +
-        "WHERE a.attrelid = '#{oid}' AND a.attnum > 0 AND NOT a.attisdropped " +
-        'ORDER BY a.attnum ' 
+      sql = <<-END_SQL
+        SELECT a.attname, 
+          pg_catalog.format_type(a.atttypid, a.atttypmod), 
+          (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) 
+           FROM pg_catalog.pg_attrdef d 
+           WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef), 
+          a.attnotnull, a.attnum 
+        FROM pg_catalog.pg_attribute a 
+        WHERE a.attrelid = '#{oid}' AND a.attnum > 0 AND NOT a.attisdropped 
+        ORDER BY a.attnum
+      END_SQL
 
       column_defs = ActiveRecord::Base.connection.execute(sql).entries
 
@@ -235,7 +237,5 @@ module Peegee
                             :def => i[0])
           end
       end
-
   end
-
 end
