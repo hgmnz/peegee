@@ -123,23 +123,27 @@ module Peegee
     private
       # Retrieves this table's OID from the database.
       def fetch_oid
-        sql = 'SELECT c.oid ' +
-        ' FROM pg_catalog.pg_class c ' +
-             ' LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace ' +
-        " WHERE c.relname ~ '^(#{@table_name})$' " +
-          ' AND pg_catalog.pg_table_is_visible(c.oid) '
+        sql = <<-END_SQL
+        SELECT c.oid 
+         FROM pg_catalog.pg_class c 
+              LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace 
+         WHERE c.relname ~ '^(#{@table_name})$'
+           AND pg_catalog.pg_table_is_visible(c.oid)
+        END_SQL
         return ActiveRecord::Base.connection.execute(sql).entries[0]
       end
 
       # Retrieves this table's primary key from the database.
       def fetch_primary_key
-        sql = 'select  conname ' +
-            ' , pg_get_constraintdef(pk.oid, true) as foreign_key ' +
-            ' from pg_catalog.pg_constraint pk ' +
-            ' inner join pg_class c ' +
-            ' on c.oid = pk.conrelid ' +
-            " where contype = 'p' " +
-            " and c.oid = '#{@table_name}'::regclass "
+        sql = <<-END_SQL
+          select  conname 
+            , pg_get_constraintdef(pk.oid, true) as foreign_key 
+            from pg_catalog.pg_constraint pk 
+              inner join pg_class c 
+                on c.oid = pk.conrelid 
+            where contype = 'p' 
+            and c.oid = '#{@table_name}'::regclass
+        END_SQL
         raw_pks = ActiveRecord::Base.connection.execute(sql).entries
         return raw_pks.collect do  |pk|
           Peegee::ForeignKey.new(#TODO: Consider passing table object (self)
@@ -151,13 +155,15 @@ module Peegee
 
       # Retrieves this table's unique constraints from the database.
       def fetch_unique_constraints
-        sql = 'select  conname ' +
-            ' , pg_get_constraintdef(uc.oid, true) as foreign_key ' +
-            ' from pg_catalog.pg_constraint uc ' +
-            ' inner join pg_class c ' +
-            ' on c.oid = uc.conrelid ' +
-            " where contype = 'u' " +
-            " and c.oid = '#{@table_name}'::regclass "
+        sql = <<-END_SQL
+           select  conname
+             , pg_get_constraintdef(uc.oid, true) as foreign_key
+             from pg_catalog.pg_constraint uc
+             inner join pg_class c 
+             on c.oid = uc.conrelid
+             where contype = 'u'
+             and c.oid = '#{@table_name}'::regclass 
+        END_SQL
         raw_ucs = ActiveRecord::Base.connection.execute(sql).entries
         return raw_ucs.collect do  |uc|
           Peegee::UniqueConstraint.new(#TODO: Consider passing table object (self)
@@ -169,13 +175,15 @@ module Peegee
 
       # Retrieves this table's foreign keys from the database.
       def fetch_foreign_keys
-        sql = 'select  conname ' +
-            ' , pg_get_constraintdef(fk.oid, true) as foreign_key ' +
-            ' from pg_catalog.pg_constraint fk ' +
-            ' inner join pg_class c ' +
-            ' on c.oid = fk.conrelid ' +
-            " where contype = 'f' " +
-            " and c.oid = '#{@table_name}'::regclass "
+        sql = <<-END_SQL
+          select  conname 
+            , pg_get_constraintdef(fk.oid, true) as foreign_key
+            from pg_catalog.pg_constraint fk
+              inner join pg_class c
+                on c.oid = fk.conrelid
+            where contype = 'f'
+            and c.oid = '#{@table_name}'::regclass
+        END_SQL
         raw_fks = ActiveRecord::Base.connection.execute(sql).entries
         return raw_fks.collect do  |fk|
           Peegee::ForeignKey.new(#TODO: Consider passing table object (self)
@@ -183,18 +191,19 @@ module Peegee
                                  :constraint_name => fk[0],
                                  :constraint_def => fk[1])
         end
-
       end
 
       # Retrieves this table's dependent foreign keys from the database.
       # A dependent foreign key, is any foreign key that references this table.
       def fetch_dependent_foreign_keys
-        sql = 'select pg_constraint.conname,' +
-            'dep_table.relname, ' +
-            'pg_get_constraintdef(pg_constraint.oid, true)  ' +
-            'from pg_constraint  ' +
-              'inner join pg_class dep_table on pg_constraint.conrelid = dep_table.oid ' +
-              "where pg_constraint.confrelid = '#{@table_name}'::regclass; "
+        sql = <<-END_SQL
+          select pg_constraint.conname,
+            dep_table.relname, 
+            pg_get_constraintdef(pg_constraint.oid, true)
+            from pg_constraint
+              inner join pg_class dep_table on pg_constraint.conrelid = dep_table.oid
+              where pg_constraint.confrelid = '#{@table_name}'::regclass;
+        END_SQL
         raw_dpfks = ActiveRecord::Base.connection.execute(sql).entries
         return raw_dpfks.collect do |dpfk|
           Peegee::ForeignKey.new(#TODO: Consider passing table object (self)
@@ -206,12 +215,18 @@ module Peegee
 
       # Retrieves indexes for this table from the database.
       def fetch_indexes
-        sql = "SELECT pg_get_indexdef(i.indexrelid, 0, true) as index_definition " +
-            ", c2.relname as index_name " +
-            ", i.indisclustered " +
-            "FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i " +
-            "WHERE c.oid = '#{@table_name}'::regclass AND c.oid = i.indrelid AND i.indexrelid = c2.oid " #+
-            #"AND i.indisprimary = false" #don't get primary key constraints...
+        sql = <<-SQL_END
+          SELECT pg_get_indexdef(i.indexrelid, 0, true) as index_definition 
+          , c2.relname as index_name 
+          , i.indisclustered 
+          FROM pg_catalog.pg_class c
+            inner join pg_catalog.pg_index i
+              on c.oid = i.indrelid
+            inner join pg_catalog.pg_class c2
+              on i.indexrelid = c2.oid
+          WHERE c.oid = '#{@table_name}'::regclass 
+        SQL_END
+        #"AND i.indisprimary = false" #don't get primary key constraints...
         indexes = ActiveRecord::Base.connection.execute(sql).entries
         return indexes.collect do |i| 
           Peegee::Index.new(:table_name => @table_name,
