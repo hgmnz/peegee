@@ -9,16 +9,16 @@ module Peegee
     # If a proper index can't be found, an exception will be raised.
     def cluster(cluster_index = nil)
       cluster_index = find_cluster_index(cluster_index)
-      puts "Cluster index is: #{cluster_index.inspect}"
-      puts "Cluster index type is: #{cluster_index.class.name}"
-      dependencies, dependent_foreign_keys = remember_dependencies
+      cache_dependencies
       ActiveRecord::Base.transaction do
-        dependent_foreign_keys.map { |dfk| dfk.drop }
         create_tmp_table
         move_data(cluster_index)
+        dependent_foreign_keys.map { |dfk| dfk.drop }
         drop_original_and_rename_tmp_table
-        dependencies.reverse.map { |dep| dep.create }
+        indexes.map { |i| i.create }
+        foreign_keys.map { |fk| fk.create }
         dependent_foreign_keys.map { |dfk| dfk.create }
+        unique_constraints.map { |uc| uc.create }
       end
     end
 
@@ -80,7 +80,7 @@ module Peegee
             ' WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef), ' +
             'a.attnotnull, a.attnum ' +
           'FROM pg_catalog.pg_attribute a ' +
-          "WHERE a.attrelid = '#{oid}' AND a.attnum > 0 AND NOT a.attisdropped " +
+          "WHERE a.attrelid = '#{oid!}' AND a.attnum > 0 AND NOT a.attisdropped " +
           " and " +
             '(SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) ' +
             ' FROM pg_catalog.pg_attrdef d ' +
@@ -106,12 +106,11 @@ module Peegee
         end
       end
 
-      # Retreives an array of this table's foreign keys,
-      # dependent foreign keys, and indexes. 
-      def remember_dependencies
-        dependencies = []
-        dependencies << foreign_keys << indexes
-        return dependencies.flatten, dependent_foreign_keys 
+      def cache_dependencies
+        dependent_foreign_keys
+        foreign_keys
+        indexes
+        unique_constraints
       end
 
   end

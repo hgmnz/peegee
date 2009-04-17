@@ -6,8 +6,7 @@ require 'yaml'
 class PeegeeHelper
 
   attr_accessor :host, :username, :password
-  #attr_reader :path
-  
+
   def initialize
     @path = File.expand_path(File.dirname(__FILE__))
     @host = 'localhost'
@@ -33,19 +32,14 @@ class PeegeeHelper
       :password => @password,
       :host => @host
     )
-
     ActiveRecord::Base.logger = Logger.new(active_record_log_file)
-    
+  end
+
+  def create_default_tables
     structure = File.open('spec/fixtures/structure.sql') { |f| f.read.chomp }
-    structure.split(';').each { |sql|
+    structure.split(';').each do |sql|
       ActiveRecord::Base.connection.execute sql unless sql.start_with? '--'
-    }
-    
-    #File.open('spec/fixtures/data.sql') { |f|
-      #while line = f.gets
-        #ActiveRecord::Base.connection.execute line unless line.blank?
-      #end
-    #}
+    end
   end
 
   def configure_peegee
@@ -59,6 +53,7 @@ class PeegeeHelper
   
   def reset
     setup_pgsql
+    create_default_tables
   end
 
   AR_LOGFILE = 'tmp/active_record.log'

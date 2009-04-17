@@ -1,6 +1,8 @@
 module Peegee
   class Constraint
 
+    attr_accessor :constraint_def, :table_name
+
     def initialize(opts = {})
       @table_name = opts[:table_name]
       @constraint_name = opts[:constraint_name]
