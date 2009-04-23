@@ -80,7 +80,7 @@ module Peegee
             ' WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef), ' +
             'a.attnotnull, a.attnum ' +
           'FROM pg_catalog.pg_attribute a ' +
-          "WHERE a.attrelid = '#{oid!}' AND a.attnum > 0 AND NOT a.attisdropped " +
+          "WHERE a.attrelid = '#{@table_name}'::regclass AND a.attnum > 0 AND NOT a.attisdropped " +
           " and " +
             '(SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid) for 128) ' +
             ' FROM pg_catalog.pg_attrdef d ' +
