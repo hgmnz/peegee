@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'active_record'
 prefix = defined?(JRUBY_VERSION) ? 'jdbc' : ''
 require "active_record/connection_adapters/#{prefix}postgresql_adapter"
