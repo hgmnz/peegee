@@ -58,6 +58,16 @@ describe 'Peegee::Table' do
     end
   end
 
+  describe 'calling exists?' do
+    it 'should return true when the table exists' do
+      Peegee::Table.exists?('users').should be_true
+    end
+
+    it 'should return false when the table does not exist' do
+      Peegee::Table.exists?('foo').should be_false
+    end
+  end
+
   describe 'calling oid' do
     before(:each) do
       @users_table = Peegee::Table.find('users')
