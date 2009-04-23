@@ -16,7 +16,7 @@ describe 'Peegee::Table' do
     end
 
     it 'should understand a string parameter and assign it to table_name)' do
-      the_table = Peegee::Table.find(:table_name => 'posts')
+      the_table = Peegee::Table.find('posts')
       the_table.should be_kind_of(Peegee::Table)
       the_table.table_name.should == 'posts'
     end
