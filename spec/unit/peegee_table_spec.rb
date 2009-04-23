@@ -81,6 +81,12 @@ describe 'Peegee::Table' do
 
   end
 
+  describe 'calling foreign_keys' do
+    it 'should return all foreign keys reported by postgresql' do
+
+    end
+  end
+
   describe 'clustering a table' do
 
     def do_cluster
@@ -88,7 +94,6 @@ describe 'Peegee::Table' do
     end
 
     before(:each) do
-      Peegee::Database.forget_table_register!
       @peegee_helper.configure_peegee
       3.times { Factory.create(:user) }
       @users = User.all

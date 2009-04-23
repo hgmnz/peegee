@@ -16,10 +16,5 @@ module Peegee
         return table
       end
     end
-
-    def self.forget_table_register!
-      @tables = {}
-    end
-
   end
 end
