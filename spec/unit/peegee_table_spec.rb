@@ -91,9 +91,28 @@ describe 'Peegee::Table' do
 
   end
 
-  describe 'calling foreign_keys' do
-    it 'should return all foreign keys reported by postgresql' do
+  describe 'calling foreign_keys on the posts table' do
 
+    def test_foreign_key_includes(fks, fk_name)
+      fks.select { 
+        |fk| fk.foreign_key_name == fk_name
+      }.should_not be_nil
+    end
+
+    before(:each) do
+      @users_table = Peegee::Table.find('posts')
+    end
+
+    it 'should return the fk_posts_created_by_id foreign key' do
+      test_foreign_key_includes(@users_table.foreign_keys, 'fk_posts_created_by_id')
+    end
+
+    it 'should return the fk_posts_updated_by_id foreign key' do
+      test_foreign_key_includes(@users_table.foreign_keys, 'fk_posts_updated_by_id')
+    end
+
+    it 'should return two foreign keys' do
+      @users_table.foreign_keys.size.should == 2
     end
   end
 
