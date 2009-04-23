@@ -7,6 +7,12 @@ describe 'Peegee::Table' do
     @peegee_helper.reset
   end
 
+  describe "when creating an instance calling new" do
+    it 'should raise an error' do
+      lambda { Peegee::Table.new('foo') }.should raise_error
+    end
+  end
+
   describe 'when calling find' do
 
     it 'should understand hash parameters with a :table_name key' do
@@ -22,23 +28,12 @@ describe 'Peegee::Table' do
     end
     
     describe 'when it has been called before for the same table' do
-
       before(:each) do
         @posts1 = Peegee::Table.find('posts')
         @posts2 = Peegee::Table.find('posts')
       end
       it 'should return the same object' do
         @posts1.should == @posts2
-      end
-
-      describe 'when retreiving associated foreign keys' do
-        before(:each) do
-          
-        end
-
-        it 'should return the same foreign keys for both objects' do
-
-        end
       end
     end
 
@@ -56,10 +51,34 @@ describe 'Peegee::Table' do
       before :each do
         @users_table = Peegee::Table.find(:table_name => 'users')
       end
-      it 'should create a Peegee::Table instance' do
+      it 'should create a Peegee::Table instance with a table_name of users' do
         @users_table.should be_kind_of(Peegee::Table)
+        @users_table.table_name.should == 'users'
       end
     end
+  end
+
+  describe 'calling oid' do
+    before(:each) do
+      @users_table = Peegee::Table.find('users')
+    end
+
+    it 'should match the postgresql OID' do
+      sql = <<-END_SQL
+      SELECT c.oid 
+       FROM pg_catalog.pg_class c 
+            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace 
+       WHERE c.relname ~ '^(users)$'
+         AND pg_catalog.pg_table_is_visible(c.oid)
+      END_SQL
+      users_oid = ActiveRecord::Base.connection.execute(sql).entries[0][0].to_i
+      @users_table.oid.should == users_oid
+    end
+
+    it 'should be a Fixnum' do
+      @users_table.oid.should be_kind_of(Fixnum)
+    end
+
   end
 
   describe 'clustering a table' do

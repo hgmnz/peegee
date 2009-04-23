@@ -186,7 +186,7 @@ module Peegee
          WHERE c.relname ~ '^(#{@table_name})$'
            AND pg_catalog.pg_table_is_visible(c.oid)
         END_SQL
-        return ActiveRecord::Base.connection.execute(sql).entries[0]
+        return ActiveRecord::Base.connection.execute(sql).entries[0][0].to_i
       end
 
       # Retrieves this table's primary key from the database.
