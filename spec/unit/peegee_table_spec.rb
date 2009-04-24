@@ -100,19 +100,19 @@ describe 'Peegee::Table' do
     end
 
     before(:each) do
-      @users_table = Peegee::Table.find('posts')
+      @posts_table = Peegee::Table.find('posts')
     end
 
     it 'should return the fk_posts_created_by_id foreign key' do
-      test_foreign_key_includes(@users_table.foreign_keys, 'fk_posts_created_by_id')
+      test_foreign_key_includes(@posts_table.foreign_keys, 'fk_posts_created_by_id')
     end
 
     it 'should return the fk_posts_updated_by_id foreign key' do
-      test_foreign_key_includes(@users_table.foreign_keys, 'fk_posts_updated_by_id')
+      test_foreign_key_includes(@posts_table.foreign_keys, 'fk_posts_updated_by_id')
     end
 
     it 'should return two foreign keys' do
-      @users_table.foreign_keys.size.should == 2
+      @posts_table.foreign_keys.size.should == 2
     end
 
   end
@@ -167,6 +167,33 @@ describe 'Peegee::Table' do
         end
       end
     end
+  end
+
+
+  describe 'calling dependent_foreign_keys on the users table' do
+
+    def test_dependent_foreign_key_includes(fks, fk_name)
+      fks.select { 
+        |fk| fk.foreign_key_name == fk_name
+      }.should_not be_nil
+    end
+
+    before(:each) do
+      @users_table = Peegee::Table.find('users')
+    end
+
+    it 'should return the fk_posts_created_by_id foreign key' do
+      test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys, 'fk_posts_created_by_id')
+    end
+
+    it 'should return the fk_posts_updated_by_id foreign key' do
+      test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys, 'fk_posts_updated_by_id')
+    end
+
+    it 'should return two foreign keys' do
+      @users_table.dependent_foreign_keys.size.should == 2
+    end
+
   end
 
   describe 'clustering a table' do
