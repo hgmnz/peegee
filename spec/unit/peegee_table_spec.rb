@@ -194,6 +194,85 @@ describe 'Peegee::Table' do
       @users_table.dependent_foreign_keys.size.should == 2
     end
 
+
+    describe 'when the dependent foreign_keys where previously retrieved' do
+
+      before(:each) do
+        @peegee_helper.create_default_tables
+        @users_dfks = @users_table.dependent_foreign_keys
+      end
+
+      describe 'when the fk_posts_created_by_id foreign key was dropped' do
+        before(:each) do
+          @users_dfks.select { 
+            |fk| fk.foreign_key_name == 'fk_posts_created_by_id'
+          }[0].drop
+        end
+
+        it 'should return two (cached) foreign keys' do
+          @users_table.dependent_foreign_keys.size.should == 2
+        end
+
+        it 'should return the fk_posts_created_by_id foreign key' do
+          test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys, 'fk_posts_created_by_id')
+        end
+
+        it 'should return the fk_posts_updated_by_id foreign key' do
+          test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys, 'fk_posts_updated_by_id')
+        end
+
+      end
+    end
+
+  end
+
+  describe 'calling dependent_foreign_keys! on the users table' do
+    
+    def test_dependent_foreign_key_includes(fks, fk_name)
+      fks.select { 
+        |fk| fk.foreign_key_name == fk_name
+      }.should_not be_nil
+    end
+
+    before(:each) do
+      @users_table = Peegee::Table.find('users')
+    end
+
+    it 'should return the fk_posts_created_by_id foreign key' do
+      test_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_created_by_id')
+    end
+
+    it 'should return the fk_posts_updated_by_id foreign key' do
+      test_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_updated_by_id')
+    end
+
+    it 'should return two foreign keys' do
+      @users_table.dependent_foreign_keys!.size.should == 2
+    end
+
+    describe 'when the dependent foreign_keys where previously retrieved' do
+
+      before(:each) do
+        @peegee_helper.create_default_tables
+        @users_dfks = @users_table.dependent_foreign_keys!
+      end
+
+      describe 'when the fk_posts_created_by_id foreign key was dropped' do
+        before(:each) do
+          @users_dfks.select { 
+            |fk| fk.foreign_key_name == 'fk_posts_created_by_id'
+          }[0].drop
+        end
+
+        it 'should return only one foreign key' do
+          @users_table.dependent_foreign_keys!.size.should == 1
+        end
+
+        it 'should return the fk_posts_updated_by_id foreign key' do
+          @users_table.foreign_keys!.first.foreign_key_name.should == 'fk_posts_updated_by_id'
+        end
+      end
+    end
   end
 
   describe 'clustering a table' do
