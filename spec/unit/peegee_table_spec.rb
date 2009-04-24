@@ -239,11 +239,11 @@ describe 'Peegee::Table' do
     end
 
     it 'should return the fk_posts_created_by_id foreign key' do
-      test_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_created_by_id')
+      test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_created_by_id')
     end
 
     it 'should return the fk_posts_updated_by_id foreign key' do
-      test_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_updated_by_id')
+      test_dependent_foreign_key_includes(@users_table.dependent_foreign_keys!, 'fk_posts_updated_by_id')
     end
 
     it 'should return two foreign keys' do
@@ -269,7 +269,7 @@ describe 'Peegee::Table' do
         end
 
         it 'should return the fk_posts_updated_by_id foreign key' do
-          @users_table.foreign_keys!.first.foreign_key_name.should == 'fk_posts_updated_by_id'
+          @users_table.dependent_foreign_keys!.first.foreign_key_name.should == 'fk_posts_updated_by_id'
         end
       end
     end
