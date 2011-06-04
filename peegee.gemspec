@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Harold Giménez"]
   s.email       = ["hgimenez@thoughtbot.com"]
   s.homepage    = "http://github.com/peegee"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{PostgreSQL extensions for ActiveRecord}
+  s.description = %q{Not much going on here yet.}
 
   s.add_dependency 'activerecord'
   s.add_development_dependency 'cucumber'
