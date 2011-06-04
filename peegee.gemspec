@@ -1,63 +1,21 @@
 # -*- encoding: utf-8 -*-
+$:.push File.expand_path("../lib", __FILE__)
+require "peegee/version"
 
 Gem::Specification.new do |s|
-  s.name = %q{peegee}
-  s.version = "0.1.1"
+  s.name        = "peegee"
+  s.version     = Peegee::VERSION
+  s.platform    = Gem::Platform::RUBY
+  s.authors     = ["TODO: Write your name"]
+  s.email       = ["TODO: Write your email address"]
+  s.homepage    = ""
+  s.summary     = %q{TODO: Write a gem summary}
+  s.description = %q{TODO: Write a gem description}
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Harold A. Gimenez"]
-  s.date = %q{2009-04-13}
-  s.email = %q{harold.gimenez@gmail.com}
-  s.extra_rdoc_files = [
-    "README.textile"
-  ]
-  s.files = [
-    "README.textile",
-    "Rakefile",
-    "VERSION.yml",
-    "lib/peegee.rb",
-    "lib/peegee/clustering.rb",
-    "lib/peegee/configuration.rb",
-    "lib/peegee/constraint.rb",
-    "lib/peegee/foreign_key.rb",
-    "lib/peegee/index.rb",
-    "lib/peegee/primary_key.rb",
-    "lib/peegee/table.rb",
-    "lib/peegee/table_does_not_exist_error.rb",
-    "lib/peegee/unique_constraint.rb",
-    "peegee.gemspec",
-    "spec/factories.rb",
-    "spec/fixtures/activerecord_models.rb",
-    "spec/fixtures/structure.sql",
-    "spec/peegee_helper.rb",
-    "spec/spec_helper.rb",
-    "spec/unit/peegee_table_spec.rb"
-  ]
-  s.has_rdoc = true
-  s.homepage = %q{http://github.com/hgimenez/peegee}
-  s.rdoc_options = ["--charset=UTF-8"]
+  s.rubyforge_project = "peegee"
+
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  s.requirements = ["A functioning PostgreSQL database, configured via ActiveRecord (for example, database.yml on a Rails project, or inline within your scripts)."]
-  s.rubygems_version = %q{1.3.1}
-  s.summary = %q{A set of utilities for doing PostgreSQL database related stuffs from ruby.}
-  s.test_files = [
-    "spec/factories.rb",
-    "spec/fixtures/activerecord_models.rb",
-    "spec/peegee_helper.rb",
-    "spec/spec_helper.rb",
-    "spec/unit/peegee_table_spec.rb"
-  ]
-
-  if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 2
-
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activerecord>, [">= 0"])
-    else
-      s.add_dependency(%q<activerecord>, [">= 0"])
-    end
-  else
-    s.add_dependency(%q<activerecord>, [">= 0"])
-  end
 end
