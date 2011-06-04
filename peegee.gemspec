@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'aruba'
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
+  s.add_development_dependency 'rails', '3.0.7'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
