@@ -13,11 +13,13 @@ Gem::Specification.new do |s|
   s.description = %q{Not much going on here yet.}
 
   s.add_dependency 'activerecord'
+  s.add_development_dependency 'pg'
   s.add_development_dependency 'cucumber'
   s.add_development_dependency 'aruba'
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
   s.add_development_dependency 'rails', '3.0.7'
+  s.add_development_dependency 'ruby-debug'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
