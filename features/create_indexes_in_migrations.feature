@@ -18,4 +18,4 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     """
     And I run `bundle exec rake db:migrate`
     Then the "users" table should have the following index:
-      | CREATE INDEX users_name_where_active_true ON users USING btree (id) where active = true |
+      | CREATE INDEX users_name_where_active_true ON users USING btree (name) WHERE active = true |

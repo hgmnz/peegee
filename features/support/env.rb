@@ -1,6 +1,12 @@
 require 'aruba/cucumber'
 require 'ruby-debug'
 
+PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
+
 Before do
   @aruba_timeout_seconds = 10
+end
+
+After do
+  FileUtils.rm_rf(File.join(PROJECT_ROOT, 'tmp', 'aruba', 'peegee_test'))
 end
