@@ -14,9 +14,6 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
       def self.up
         add_index :users, :name, :name => 'users_name_where_active_true', :where => 'active = true'
       end
-      def self.down
-        remove_index :users, :name
-      end
     """
     And I run `bundle exec rake db:migrate`
     Then the "users" table should have the following index:
@@ -29,9 +26,6 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
       def self.up
         add_index :users, { :expression => "DATE(created_at)" }, :name => 'users_created_at_date'
       end
-      def self.down
-        remove_index :users, :name
-      end
     """
     And I run `bundle exec rake db:migrate`
     Then the "users" table should have the following index:
@@ -43,9 +37,6 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     """
       def self.up
         add_index :users, { :expression => "DATE(created_at)" }, :where => 'active = true', :name => 'users_created_at_date_where_active_true'
-      end
-      def self.down
-        remove_index :users, :name
       end
     """
     And I run `bundle exec rake db:migrate`
