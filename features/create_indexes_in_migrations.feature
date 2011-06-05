@@ -36,3 +36,18 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I run `bundle exec rake db:migrate`
     Then the "users" table should have the following index:
       | CREATE INDEX users_created_at_date ON users USING btree (date(created_at)) |
+
+  Scenario: Adding an expression partial index
+    Given I run `script/rails generate migration add_index_on_date_created_at`
+    And I implement the latest migration as:
+    """
+      def self.up
+        add_index :users, { :expression => "DATE(created_at)" }, :where => 'active = true', :name => 'users_created_at_date_where_active_true'
+      end
+      def self.down
+        remove_index :users, :name
+      end
+    """
+    And I run `bundle exec rake db:migrate`
+    Then the "users" table should have the following index:
+      | CREATE INDEX users_created_at_date_where_active_true ON users USING btree (date(created_at)) WHERE active = true |
