@@ -1,7 +1,7 @@
 Feature: Adding PostgreSQL specific indexes in a Rails migration
   As a developer
   I can add PostgreSQL index types in a migration
-  So that I can make better use of PostgreSQL indexes
+  So that my application has better performance
 
   Background:
     Given I create and configure the "peegee_test" rails app
