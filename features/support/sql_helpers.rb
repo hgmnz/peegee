@@ -1,7 +1,7 @@
 require 'active_record'
 module SqlHelpers
   def connection
-    @connection || begin
+    @connection ||= begin
                     ActiveRecord::Base.establish_connection(
                       :adapter  => 'postgresql',
                       :encoding => 'unicode',
