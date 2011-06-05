@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    peegee (0.0.1)
+    peegee (0)
       activerecord
 
 GEM
