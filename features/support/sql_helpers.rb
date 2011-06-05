@@ -25,6 +25,11 @@ module SqlHelpers
     SQL
   end
 
+  def disconnect_test_db
+    @connection.try(:disconnect!)
+    @connection = nil
+  end
+
 end
 
 World(SqlHelpers)

@@ -9,4 +9,5 @@ end
 
 After do
   FileUtils.rm_rf(File.join(PROJECT_ROOT, 'tmp', 'aruba', 'peegee_test'))
+  disconnect_test_db
 end

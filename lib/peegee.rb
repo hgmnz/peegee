@@ -1,5 +1,5 @@
-require 'peegee/partial_index'
+require 'peegee/index'
 
 ActiveRecord::Migration.module_eval do
-  extend Peegee::PartialIndex
+  extend Peegee::Index
 end

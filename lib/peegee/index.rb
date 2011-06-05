@@ -1,9 +1,7 @@
 module Peegee
-  module PartialIndex
+  module Index
 
     def add_index(table_name, column_name, options = {})
-      super unless options[:where]
-
       column_names = Array.wrap(column_name)
       index_name   = index_name(table_name, :column => column_names)
 
@@ -17,9 +15,18 @@ module Peegee
         raise ArgumentError, "Index name '#{index_name}' on table '#{table_name}' already exists"
       end
 
-      quoted_column_names = quoted_columns_for_index(column_names, options).join(", ")
+      if column_name.kind_of?(Hash) && column_name.key?(:expression)
+        quoted_column_names_or_expression = column_name[:expression]
+      else
+        quoted_column_names_or_expression = quoted_columns_for_index(column_names, options).join(", ")
+      end
 
-      execute "CREATE #{index_type} INDEX #{quote_column_name(index_name)} ON #{quote_table_name(table_name)} (#{quoted_column_names}) WHERE #{options[:where]}"
+      sql = "CREATE #{index_type} INDEX #{quote_column_name(index_name)} ON #{quote_table_name(table_name)} (#{quoted_column_names_or_expression})"
+
+      if options.key?(:where)
+        sql += "WHERE #{options[:where]}"
+      end
+      execute sql
     end
 
   end
