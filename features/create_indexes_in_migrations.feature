@@ -1,3 +1,4 @@
+@announce
 Feature: Adding PostgreSQL specific indexes in a Rails migration
   As a developer
   I can add PostgreSQL index types in a migration
@@ -15,7 +16,7 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
         add_index :users, :name, :name => 'users_name_where_active_true', :where => 'active = true'
       end
     """
-    And I run `bundle exec rake db:migrate`
+    And I run `bundle exec rake db:migrate --trace`
     Then the "users" table should have the following index:
       | CREATE INDEX users_name_where_active_true ON users USING btree (name) WHERE active = true |
 
