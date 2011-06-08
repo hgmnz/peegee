@@ -43,3 +43,19 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I run `bundle exec rake db:migrate`
     Then the "users" table should have the following index:
       | CREATE INDEX users_created_at_date_where_active_true ON users USING btree (date(created_at)) WHERE active = true |
+
+  Scenario: Adding a sort order to an index
+    Given I run `script/rails generate migration add_index_on_users_name_asc`
+    And I implement the latest migration as:
+    """
+      def self.up
+        add_index :users, :name => 'users_name_asc_active_desc' do |i|
+          i.column :name,    :asc
+          i.column :active, :desc
+        end
+      end
+    """
+    And I run `bundle exec rake db:migrate --trace`
+    Then the "users" table should have the following index:
+      | CREATE INDEX users_name_asc_active_desc ON users USING btree (name, active DESC) |
+

@@ -1,12 +1,13 @@
 module Peegee
   class Index
 
-    attr_accessor :index_name, :table_name, :options, :column_or_expression, :uniqueness
+    attr_accessor :index_name, :table_name, :options, :uniqueness
+    attr_accessor :columns_or_expressions
 
     def initialize(options = {})
-      self.table_name           = options[:table_name]
-      self.column_or_expression = options[:column_or_expression]
-      self.options              = options[:options]
+      self.table_name             = options[:table_name]
+      self.columns_or_expressions = options.key?(:column_or_expression) ? [[options[:column_or_expression].to_s, []]] : []
+      self.options                = options[:options]
     end
 
     def create_sql
@@ -16,17 +17,24 @@ module Peegee
       if @options.key?(:where)
         sql += " WHERE #{options[:where]}"
       end
+
       sql
+    end
+
+    def column(name, *args)
+      columns_or_expressions << [name.to_s, args]
     end
 
     private
 
     def column_or_expression_sql
-      if self.column_or_expression.kind_of?(Hash) && self.column_or_expression.key?(:expression)
-        self.column_or_expression[:expression]
-      else
-        Peegee::Quoting.quoted_columns_for_index(Array.wrap(self.column_or_expression)).join(", ")
-      end
+      self.columns_or_expressions.map do |column_or_expression|
+        "#{Peegee::Quoting.quoted_columns_for_index(column_or_expression.first)} #{column_options_sql(column_or_expression.last)}"
+      end.join(', ')
+    end
+
+    def column_options_sql(options)
+      options.first.to_s.upcase
     end
 
     def uniqueness
