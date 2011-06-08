@@ -12,11 +12,21 @@ Peegee adds support for some indexing extensions allowed by Postgres. You can ru
 
 #### Expression indexes
 ```ruby
-  add_index :users, { :expression => 'DATE(created_at)' }, :name => 'users_created_at_date'
+  add_index :users, :name => 'users_created_at_date' do |i|
+    i.expression 'DATE(created_at)'
+  end
+```
+
+#### Sorted indexes
+```ruby
+  add_index :users, :name => 'users_created_at_date' do |i|
+    i.column :name, :asc
+    i.column :active, :desc
+  end
 ```
 
 ### License
 
 Peegee is distributed under the MIT license.
 
-Copyright 2011 - Harold Giménez
+Copyright 2011 - Harold Giménez and Mike Burns
