@@ -25,7 +25,9 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I implement the latest migration as:
     """
       def self.up
-        add_index :users, { :expression => "DATE(created_at)" }, :name => 'users_created_at_date'
+        add_index :users, :name => 'users_created_at_date' do |i|
+          i.expression "DATE(created_at)"
+        end
       end
     """
     And I run `bundle exec rake db:migrate`
@@ -37,7 +39,9 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I implement the latest migration as:
     """
       def self.up
-        add_index :users, { :expression => "DATE(created_at)" }, :where => 'active = true', :name => 'users_created_at_date_where_active_true'
+        add_index :users, :name => 'users_created_at_date_where_active_true', :where => 'active = true' do |i|
+          i.expression "DATE(created_at)"
+        end
       end
     """
     And I run `bundle exec rake db:migrate`
@@ -58,4 +62,3 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I run `bundle exec rake db:migrate --trace`
     Then the "users" table should have the following index:
       | CREATE INDEX users_name_asc_active_desc ON users USING btree (name, active DESC) |
-

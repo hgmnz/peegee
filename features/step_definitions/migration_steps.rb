@@ -1,6 +1,6 @@
 Given /^I implement the latest migration as:$/ do |implementation|
   in_current_dir do
-    migrations        = Dir["db/migrate/[0-9]*_*.rb"].to_a
+    migrations        = Dir["db/migrate/[0-9]*_*.rb"].sort.to_a
     path              = migrations.last
     contents          = IO.read(path)
     class_declaration = contents.split("\n").first

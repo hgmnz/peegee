@@ -6,14 +6,14 @@ module Peegee
 
     def initialize(options = {})
       self.table_name             = options[:table_name]
-      self.columns_or_expressions = options.key?(:column_or_expression) ? [[options[:column_or_expression].to_s, []]] : []
+      self.columns_or_expressions = options.key?(:column) ? [:column, [options[:column], []]] : []
       self.options                = options[:options]
     end
 
     def create_sql
       check_index_name_length
 
-      sql = "CREATE #{uniqueness} INDEX #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{column_or_expression_sql})"
+      sql = "CREATE #{uniqueness} INDEX #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{columns_or_expressions_sql})"
       if @options.key?(:where)
         sql += " WHERE #{options[:where]}"
       end
@@ -22,15 +22,34 @@ module Peegee
     end
 
     def column(name, *args)
-      columns_or_expressions << [name.to_s, args]
+      columns_or_expressions << [:column, name, args]
+    end
+
+    def expression(expr, *args)
+      columns_or_expressions << [:expression, expr, args]
+    end
+
+    def column=(column)
+      columns_or_expressions << [:column, column, []]
     end
 
     private
 
-    def column_or_expression_sql
-      self.columns_or_expressions.map do |column_or_expression|
-        "#{Peegee::Quoting.quoted_columns_for_index(column_or_expression.first)} #{column_options_sql(column_or_expression.last)}"
+    def columns_or_expressions_sql
+      self.columns_or_expressions.map do |tag,column_or_expression,args|
+        column_or_expression_sql(tag, column_or_expression, args)
       end.join(', ')
+    end
+
+    def column_or_expression_sql(tag, column_or_expression, args)
+      case tag
+      when :column
+        "#{Peegee::Quoting.quoted_columns_for_index(column_or_expression)} #{column_options_sql(args)}"
+      when :expression
+        column_or_expression
+      else
+        raise RuntimeError
+      end
     end
 
     def column_options_sql(options)
