@@ -1,4 +1,3 @@
-@announce
 Feature: Adding PostgreSQL specific indexes in a Rails migration
   As a developer
   I can add PostgreSQL index types in a migration
@@ -62,3 +61,18 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I run `bundle exec rake db:migrate --trace`
     Then the "users" table should have the following index:
       | CREATE INDEX users_name_asc_active_desc ON users USING btree (name, active DESC) |
+
+  Scenario: Adding an index with a sort order but with nulls sorted specifically
+    Given I run `script/rails generate migration add_index_on_users_nulls_sorted`
+    And I implement the latest migration as:
+    """
+      def self.up
+        add_index :users, :name => 'users_name_asc_active_desc' do |i|
+          i.column :name,    :asc, :nulls => :first
+          i.column :active, :desc, :nulls => :last
+        end
+      end
+    """
+    And I run `bundle exec rake db:migrate --trace`
+    Then the "users" table should have the following index:
+      | CREATE INDEX users_name_asc_active_desc ON users USING btree (name NULLS FIRST, active DESC NULLS LAST) |

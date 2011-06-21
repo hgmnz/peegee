@@ -53,7 +53,19 @@ module Peegee
     end
 
     def column_options_sql(options)
-      options.first.to_s.upcase
+      hash_options = options.last.respond_to?(:key?) ? options.pop : {}
+
+      "#{column_single_options_sql(options)} #{column_hash_options_sql(hash_options)}"
+    end
+
+    def column_single_options_sql(options)
+      options.first.try(:to_s).try(:upcase) || ""
+    end
+
+    def column_hash_options_sql(options)
+      options.inject("") do |acc, (k,v)|
+        "#{k.to_s.upcase} #{v.to_s.upcase} #{acc}"
+      end
     end
 
     def uniqueness
