@@ -88,3 +88,15 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I run `bundle exec rake db:migrate --trace`
     Then the "users" table should have the following index:
       | CREATE UNIQUE INDEX users_name_where_active_true ON users USING btree (name) WHERE active = true |
+
+  Scenario: Adding an index concurrently
+    Given I run `script/rails generate migration add_unique_index_to_active_users`
+    And I implement the latest migration as:
+    """
+      def self.up
+        add_index :users, :name, :name => 'users_name_concurrent'
+      end
+    """
+    And I run `bundle exec rake db:migrate --trace`
+    Then the "users" table should have the following index:
+      | CREATE INDEX users_name_concurrent ON users USING btree (name) |
