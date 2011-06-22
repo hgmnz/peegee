@@ -6,14 +6,14 @@ module Peegee
 
     def initialize(options = {})
       self.table_name             = options[:table_name]
-      self.columns_or_expressions = options.key?(:column) ? [:column, [options[:column], []]] : []
+      self.columns_or_expressions = options.key?(:column) ? [[:column, options[:column], []]] : []
       self.options                = options[:options]
     end
 
     def create_sql
       check_index_name_length
 
-      sql = "CREATE #{uniqueness} INDEX #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{columns_or_expressions_sql})"
+      sql = "CREATE #{uniqueness} INDEX #{concurrentliness} #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{columns_or_expressions_sql})"
       if @options.key?(:where)
         sql += " WHERE #{options[:where]}"
       end
@@ -72,8 +72,19 @@ module Peegee
       self.options[:unique] ? "UNIQUE" : ""
     end
 
+    def concurrentliness
+      self.options[:concurrently] ? "CONCURRENTLY" : ""
+    end
+
     def index_name
-      options[:name] || adapter.index_name(table_name, :column => column_or_expression)
+      options[:name] || default_index_name
+    end
+
+    def default_index_name
+      column_name = columns_or_expressions.select {|type, _, _| type == :column}.inject("") do |acc,(_,name,_)|
+        "#{acc}_#{name}"
+      end
+      adapter.index_name(table_name, :column => "#{column_name}_auto")
     end
 
     def check_index_name_length
