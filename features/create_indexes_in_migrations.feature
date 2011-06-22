@@ -94,7 +94,7 @@ Feature: Adding PostgreSQL specific indexes in a Rails migration
     And I implement the latest migration as:
     """
       def self.up
-        add_index :users, :name, :name => 'users_name_concurrent'
+        add_index :users, :name, :name => 'users_name_concurrent', :concurrently => true
       end
     """
     And I run `bundle exec rake db:migrate --trace`

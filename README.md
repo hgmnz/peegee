@@ -25,6 +25,13 @@ Peegee adds support for some indexing extensions allowed by Postgres. You can ru
   end
 ```
 
+#### Using [CONCURRENTLY](http://www.postgresql.org/docs/9.0/static/sql-createindex.html#SQL-CREATEINDEX-CONCURRENTLY)
+```ruby
+  def self.up
+    add_index :users, :name, :name => 'users_name_concurrent', :concurrently => true
+  end
+```
+
 ### License
 
 Peegee is distributed under the MIT license.
