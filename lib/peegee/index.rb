@@ -13,7 +13,7 @@ module Peegee
     def create_sql
       check_index_name_length
 
-      sql = "CREATE #{uniqueness} INDEX #{concurrentliness} #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{columns_or_expressions_sql})"
+      sql = "CREATE #{uniqueness} INDEX #{concurrentliness} #{adapter.quote_column_name(index_name)} ON #{adapter.quote_table_name(table_name)} (#{columns_or_expressions_sql}) #{tablespace_sql}"
       if @options.key?(:where)
         sql += " WHERE #{options[:where]}"
       end
@@ -66,6 +66,10 @@ module Peegee
       options.inject("") do |acc, (k,v)|
         "#{k.to_s.upcase} #{v.to_s.upcase} #{acc}"
       end
+    end
+
+    def tablespace_sql
+      self.options[:tablespace] ? "TABLESPACE #{self.options[:tablespace]}" : ""
     end
 
     def uniqueness
