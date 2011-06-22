@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "peegee"
   s.version     = Peegee::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Harold Giménez"]
+  s.authors     = ["Harold Giménez", "Mike Burns"]
   s.email       = ["hgimenez@thoughtbot.com"]
   s.homepage    = "http://github.com/peegee"
   s.summary     = %q{PostgreSQL extensions for ActiveRecord}
