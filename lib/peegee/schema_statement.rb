@@ -12,7 +12,13 @@ module Peegee
         index.column = column
       end
 
-      execute(index.create_sql)
+      if index.run_outside_transaction?
+        commit_db_transaction
+        execute(index.create_sql)
+        begin_db_transaction
+      else
+        execute(index.create_sql)
+      end
     end
   end
 end

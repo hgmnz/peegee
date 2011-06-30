@@ -33,6 +33,10 @@ module Peegee
       columns_or_expressions << [:column, column, []]
     end
 
+    def run_outside_transaction?
+      options[:concurrently]
+    end
+
     private
 
     def columns_or_expressions_sql

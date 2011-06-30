@@ -11,10 +11,12 @@ describe Peegee::Index, "creating SQL for a concurrent index" do
       :options => {:concurrently => true})
   end
 
-  subject { indexerizer.create_sql }
-
   it "produces the proper SQL" do
-    should == %{CREATE  INDEX CONCURRENTLY "index_#{table_name}_on__#{column}_auto" ON "#{table_name}" ("#{column}"  ) }
+    indexerizer.create_sql.should == %{CREATE  INDEX CONCURRENTLY "index_#{table_name}_on__#{column}_auto" ON "#{table_name}" ("#{column}"  ) }
+  end
+
+  it "is to be run outside of a transaction" do
+    indexerizer.should be_run_outside_transaction
   end
 end
 
@@ -30,9 +32,11 @@ describe Peegee::Index, "creating SQL for an index specifying a tablespace" do
       :options => {:tablespace => tablespace})
   end
 
-  subject { indexerizer.create_sql }
-
   it "produces the proper SQL" do
-    should == %{CREATE  INDEX  "index_#{table_name}_on__#{column}_auto" ON "#{table_name}" ("#{column}"  ) TABLESPACE #{tablespace}}
+    indexerizer.create_sql.should == %{CREATE  INDEX  "index_#{table_name}_on__#{column}_auto" ON "#{table_name}" ("#{column}"  ) TABLESPACE #{tablespace}}
+  end
+
+  it "is to be run inside of a transaction" do
+    indexerizer.should_not be_run_outside_transaction
   end
 end

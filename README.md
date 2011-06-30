@@ -30,6 +30,10 @@ Peegee adds support for some indexing extensions allowed by Postgres. You can ru
   add_index :users, :name, :name => 'users_name', :concurrently => true
 ```
 
+*Note* that this cannot run inside of a transaction. This will commit your
+running migration, add the index concurrently, and start a new migration. Use
+with caution.
+
 ### License
 
 Peegee is distributed under the MIT license.
