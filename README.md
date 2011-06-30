@@ -31,8 +31,8 @@ Peegee adds support for some indexing extensions allowed by Postgres. You can ru
 ```
 
 *Note* that this cannot run inside of a transaction. This will commit your
-running migration, add the index concurrently, and start a new migration. Use
-with caution.
+running transaction, add the index concurrently, and start a new transaction.
+Use with caution.
 
 ### License
 
