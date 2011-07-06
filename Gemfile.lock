@@ -108,6 +108,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   aruba
   cucumber
   peegee!

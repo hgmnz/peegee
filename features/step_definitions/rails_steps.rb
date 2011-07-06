@@ -22,6 +22,7 @@ test:
   CONFIG
   in_current_dir do
     File.open('config/database.yml', 'w') { |file| file.write(database_config) }
+    require 'config/environment'
   end
   And %{I add the "peegee" gem from this project as a dependency}
   And %{I run `bundle install`}

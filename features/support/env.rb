@@ -1,5 +1,6 @@
 require 'aruba/cucumber'
 require 'ruby-debug'
+require 'active_support/inflector'
 
 PROJECT_ROOT = File.expand_path('../..', File.dirname(__FILE__))
 
