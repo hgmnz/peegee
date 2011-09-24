@@ -1,0 +1,10 @@
+Version 0.1 - Fri Sep 23 23:29:04 -0400 2011
+===============================================================================
+Harold Gimenez and Mike Burns:
+
+Initial release with support to various index types:
+
+* Partial indexes
+* Expression indexes
+* Sorted indexes
+* Building indexes concurrently: Since AR migrations are wrapped in a transaction, and concurrent index building cannot be in a transaction, we commit the transaction, issue the CREATE INDEX statement, and start a new transaction afterwards.
