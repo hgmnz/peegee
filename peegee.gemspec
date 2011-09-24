@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["hgimenez@thoughtbot.com"]
   s.homepage    = "http://github.com/peegee"
   s.summary     = %q{PostgreSQL extensions for ActiveRecord}
-  s.description = %q{Introduces ActiveRecord to PostgreSQL, adding support or PostgreSQL specific features.}
+  s.description = %q{Introduces ActiveRecord to PostgreSQL, adding support for PostgreSQL specific features.}
 
   s.add_dependency 'activerecord'
   s.add_development_dependency 'pg'
