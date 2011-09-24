@@ -27,7 +27,19 @@ module SqlHelpers
   end
 
   def disconnect_test_db
-    @connection.try(:disconnect!)
+    @connection and @connection.disconnect!
     @connection = nil
+  end
+
+  def create_db
+    ActiveRecord::Base.establish_connection(
+      :adapter  => 'postgresql',
+      :encoding => 'unicode',
+      :database => 'template1'
+    )
+    result = ActiveRecord::Base.connection.select_all %{SELECT * FROM pg_catalog.pg_database WHERE datname = 'peegee_development'}
+    if result.size > 0
+      ActiveRecord::Base.connection.execute 'CREATE DATABASE peegee_development;'
+    end
   end
 end

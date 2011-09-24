@@ -4,6 +4,6 @@ require 'peegee'
 
 RSpec.configure do |c|
   c.include SqlHelpers
-  c.before(:all) { connection }
+  c.before(:all) { create_db && connection }
   c.after(:all) { disconnect_test_db }
 end
