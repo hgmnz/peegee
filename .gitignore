@@ -2,3 +2,4 @@ tmp
 peegee*.gem
 *swp
 *rbc
+Gemfile.lock
