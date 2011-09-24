@@ -38,7 +38,7 @@ module SqlHelpers
       :database => 'template1'
     )
     result = ActiveRecord::Base.connection.select_all %{SELECT * FROM pg_catalog.pg_database WHERE datname = 'peegee_development'}
-    if result.size > 0
+    unless result.size > 0
       ActiveRecord::Base.connection.execute 'CREATE DATABASE peegee_development;'
     end
   end
